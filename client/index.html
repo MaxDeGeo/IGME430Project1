@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/styles.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script>
+    const handleResponse = (xhr) => {
+      // console.log(xhr.response);
+      // getTasks(e);
+    };
+
+    const getInfo = (e, col, id) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('get', `/getTask?column=${col}&task=${id}`);
+      xhr.setRequestHeader('Accept', 'application/json');
+
+      xhr.onload = () => handleResponse(xhr);
+      xhr.send();
+      e.preventDefault();
+
+      openModal(e);
+
+      return false;
+    };
+
+    const sendTask = (e) => {
+      if ((e.target.parentElement.parentElement.children[1].lastChild.children[0].value).trim() !== '') {
+        e.preventDefault();
+        const xhr = new XMLHttpRequest();
+        xhr.open('post', '/addTask');
+
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onload = () => {
+          handleResponse(xhr, true);
+
+          clearPage();
+          getTasks(e);
+        };
+
+        const col = e.target.parentElement.parentElement.dataset.col;
+        const title = e.target.parentElement.parentElement.children[1].lastChild.children[0].value;
+        const formData = `column=${col}&title=${title}`;
+        xhr.send(formData);
+        
+        return false;
+      }
+    };
+
+    const closeModal = (e) => {
+      e.target.parentElement.parentElement.parentElement.style.display = "none";
+    }
+    
+    const openModal = (e) => {
+      let modal = document.querySelector("#card-full-view");
+      modal.style.display = "block";
+      modal.children[0].children[0].children[0].value = e.target.innerHTML;
+    }
+
+    const setupPage = (xhr) => {      
+      let json = JSON.parse(xhr.response);
+      let listContainer = document.querySelector('#list-container');
+
+      for (let i = 0; i < json.columns.length; i++) {
+        let list = document.createElement('div');
+        list.dataset.col = i;
+        list.classList.add('list');
+
+        //Head section
+        let listHead = document.createElement('div');
+        listHead.classList.add('list-head');
+
+        let listTitle = document.createElement('div');
+        listTitle.classList.add('list-title');
+        listHead.appendChild(listTitle);
+
+        let listInput = document.createElement('input');
+        listInput.classList.add('title-input');
+        listInput.value = json.columns[i].name;
+        listTitle.appendChild(listInput);
+
+        list.appendChild(listHead);
+
+        //Body section
+        let listBody = document.createElement('div');
+        listBody.classList.add('list-body');
+
+        for (let j = 0; j < json.columns[i].tasks.length; j++) {
+          let task = document.createElement('div');
+          task.classList.add('task');
+          task.dataset.id = j;
+          task.onclick = () => getInfo(event, i, json.columns[i].tasks[j].id);
+          let taskText = document.createElement('div');
+          taskText.classList.add('created-task-title');
+          taskText.innerHTML = json.columns[i].tasks[j].title;
+          task.appendChild(taskText);
+
+          listBody.appendChild(task);
+        }
+        list.appendChild(listBody);
+
+        //Footer
+        let addContainer = document.createElement('div');
+        addContainer.classList.add('add-task-container');
+
+        let taskButton = document.createElement('div');
+        taskButton.classList.add('add-task-button');
+        taskButton.onclick= (e) => newTask(e);
+        addContainer.appendChild(taskButton);
+
+        let buttonText = document.createElement('div');
+        buttonText.classList.add('add-task-text');
+        taskButton.appendChild(buttonText);
+
+        let plus = document.createElement('div');
+        plus.innerHTML = "+";
+
+        buttonText.appendChild(plus);
+        let text = document.createElement('div');
+        text.innerHTML = "Add a task";
+        buttonText.appendChild(text);
+        
+        list.appendChild(addContainer);
+        listContainer.appendChild(list);
+      }
+
+      let newList = document.createElement('div');
+      newList.id = "newList";
+
+      let listText = document.createElement('div');
+      listText.innerHTML = "Add a list";
+      listText.classList.add('addListButton');
+      newList.appendChild(listText);
+      
+      listContainer.appendChild(newList);
+
+    }
+
+    const newTask = (e) => {
+      let list = e.target.closest('.list').children[1];
+
+      // list.scrollTop = "100";
+
+      let taskContainer = document.createElement('div');
+      taskContainer.classList.add('task');
+
+      let taskText = document.createElement('textarea');
+      taskText.placeholder = "Enter a title for this task...";
+      taskText.classList.add('task-title');
+      taskContainer.appendChild(taskText);
+
+      list.appendChild(taskContainer);
+
+      let listFooter = list.parentElement.children[2];
+
+      while (listFooter.firstChild) {
+        listFooter.removeChild(listFooter.firstChild);
+      }
+
+      createFooter(listFooter);
+    };
+
+    const createFooter = (footerContainer) => {
+      footerContainer.classList = "";
+      footerContainer.classList.add('add-task-flex');
+
+      let button = document.createElement('div');
+      button.classList.add('add-task');
+      button.innerHTML = "Add Task";
+      button.onclick = (e) => sendTask(e);
+      footerContainer.appendChild(button);
+
+      let cancel = document.createElement('div');
+      cancel.classList.add('cancel-task');
+      cancel.innerHTML = "x";
+      cancel.onclick = (e) => cancelTask(e);
+      footerContainer.appendChild(cancel);
+    };
+
+    const cancelTask = (e) => {
+      let list = e.target.closest('.list');
+      let listBody = list.children[1];
+      let addContainer = e.target.closest('.list').children[2];
+      addContainer.classList = "";
+
+      while (addContainer.firstChild) {
+        addContainer.removeChild(addContainer.firstChild);
+      }
+
+      addContainer.classList.add('add-task-container');
+
+      let taskButton = document.createElement('div');
+      taskButton.classList.add('add-task-button');
+      taskButton.onclick= (e) => newTask(e);
+      addContainer.appendChild(taskButton);
+
+      let buttonText = document.createElement('div');
+      buttonText.classList.add('add-task-text');
+      taskButton.appendChild(buttonText);
+
+      let plus = document.createElement('div');
+      plus.innerHTML = "+";
+
+      buttonText.appendChild(plus);
+      let text = document.createElement('div');
+      text.innerHTML = "Add a task";
+      buttonText.appendChild(text);
+      
+      list.appendChild(addContainer);
+
+      listBody.removeChild(listBody.lastChild);
+    }
+
+    const createColumn = (e) => {
+      console.log("In");
+    }
+
+    const init = (e) => {
+      getTasks(e);
+    }
+    
+    const getTasks = (e) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('get', `/getTasks`);
+      xhr.setRequestHeader('Accept', 'application/json');
+
+      xhr.onload = () => setupPage(xhr);
+      xhr.send();
+      e.preventDefault();
+    };
+
+    const clearPage = () => {
+      const listCont = document.querySelector('#list-container');
+      while (listCont.firstChild) {
+        listCont.removeChild(listCont.firstChild);
+      }
+    }
+
+    window.onload = init;
+  </script>
+  <title>Project 1</title>
+</head>
+<body>
+  <header id="header-container">
+    <div id="resize-button"><img src="logo.png" alt="arrow"/></div>
+    <h1 id="site-title">Task Manager</h1>
+  </header>
+  <main id="main">
+    <div id="card-full-view">
+      <div id="card-full-view-body">
+        <div id="card-full-header">
+          <input id="card-full-title">
+          <div id="card-full-close" onclick="closeModal(event);">x</div>
+        </div>
+      </div>
+    </div>
+    <!-- <section name="task-create" id="task-container"></section> -->
+    <section id="list-container">
+      <!-- <div id="newList"></div> -->
+    </section>
+  </main>
+</body>
+</html>

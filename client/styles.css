@@ -1,0 +1,313 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* CSS Reset End */
+
+body {
+  background-image: url('/background.jpeg');
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: cover;
+  overflow-y: hidden;
+  font-family: sans-serif;
+}
+
+#header-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  height: 60px;
+  background-color: rgba(0, 0, 0, .32);
+}
+
+#resize-button {
+  border-radius: 5em;
+  width: 45px;
+  height: 45px;
+  transform: translateY(calc(15px / 2));
+  margin: 0px 8px;
+  text-align: center;
+}
+
+#resize-button img {
+  color: #5f6367;
+  width: 40px;
+  height: 40px;
+  transform: translateY(2.5px);
+}
+
+#site-title {
+  font-size: 1.5em;
+  font-family: sans-serif;
+  transform: translateY(29%);
+  color: #C1C3C6;
+}
+
+#main {
+  overflow-y: hidden;
+}
+
+#list-container {
+  overflow-y: hidden;
+  overflow-x: scroll;
+  max-height: calc(100vh - 130px);
+  transition: .5s;
+  padding-top: 50px;
+  padding-right: 20px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: flex-start
+}
+
+.list-head {
+  height: 45px;
+}
+
+.list-body {
+  max-height: 471px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.list {
+  display: inline-block;
+  background-color: #ebecf0;
+  width: 300px;
+  /* height: 50px; */
+  max-height: calc(100% - 70px);
+  border-radius: 5px;
+  margin-left: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+}
+
+.list-title {
+  color: black;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.title-input {
+  cursor: pointer;
+  font-weight: bold;
+  margin: 10px 5px;
+  height: 20px;
+  width: calc(100% - 20px);
+  border: 2px solid #ebecf0;
+  background-color: #ebecf0;
+}
+
+.title-input:focus {
+  background-color: white;
+  /* border: 2px solid blue; */
+}
+
+.add-task-container {
+  height: 45px;
+}
+
+.add-task-button {
+  margin-top: 13px;
+  color: #727a86;
+  font-family: sans-serif;
+  padding-bottom: 5px;
+  padding-left: 20px;
+  width: calc(100% - 20px);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-task-text {
+  display: inline-flex;
+}
+
+.add-task-text div:nth-child(1) {
+font-size: 1.5em;
+}
+
+.add-task-text div:nth-child(2) {
+  margin-top: 6px;
+  margin-left: 6px;
+}
+
+.add-task-button:hover {
+  background-color: #DADBE3;
+}
+
+.task {
+  background-color: white;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.created-task-title {
+  resize: none;
+  font-family: sans-serif;
+  border: none;
+  font-size: .9em;
+  color: black;
+  border-radius: 5px;
+  padding: 15px;
+  padding-bottom: 30px;
+  cursor: pointer;
+}
+
+.task-title {
+  /* resize: vertical; */
+  resize: none;
+  width: calc(100% - 30px);
+  font-family: sans-serif;
+  border: none;
+  font-size: .9em;
+  color: black;
+  border-radius: 5px;
+  padding: 15px;
+  padding-bottom: 30px;
+}
+
+.task-title:focus {
+  outline-width: 0;
+}
+
+.add-task-flex {
+  display: flex;
+}
+
+.add-task {
+  border-radius: 5px;
+  width: 100px;
+  background-color: rgb(17, 146, 17);
+  text-align: center;
+  padding: 7px 0px;
+  cursor: pointer;
+  color: white;
+}
+
+.add-task:hover {
+  background-color: rgb(26, 170, 26);
+}
+
+.cancel-task {
+  padding-left: 20px;
+  padding-top: 1px;
+  font-size: 1.5em;
+  color: gray;
+}
+
+.cancel-task:hover {
+  color: darkgray;
+}
+
+#card-full-view {
+  display: none;
+  background-color: rgba(0, 0, 0, .64);
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  top: 0px;
+}
+
+#card-full-view-body {
+  width:  768px;
+  margin: 48px auto 80px;
+  height: 500px;
+  border-radius: 5px;
+  background-color: #f4f5f7;
+}
+
+#card-full-header {
+  width: 100%;
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+
+#card-full-title {
+  width: 90%;
+  background-color: #f4f5f7;
+  border: 1px solid #f4f5f7;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+#card-full-title:focus {
+  background-color: white;
+}
+
+#card-full-close {
+  font-size: 2em;
+  width: 5%;
+  text-align: center;
+  cursor: pointer;
+}
+
+#newList {
+  display: inline-block;
+  background-color: rgba(0, 0, 0, .24);
+  width: 300px;
+  height: 50px;
+  max-height: calc(100% - 70px);
+  border-radius: 5px;
+  margin-left: 20px;
+  cursor: pointer;
+}
+
+#newList:hover {
+  background-color: rgba(131, 131, 131, 0.24);
+}
+
+.addListButton {
+  color: white;
+  text-align: center;
+  transform: translateY(100%);
+}

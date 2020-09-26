@@ -1,0 +1,26 @@
+{
+  "name": "igme430project1",
+  "version": "1.0.0",
+  "description": "Project 1 for IGME430",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Tests Complete\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaxDeGeo/IGME430Project1.git"
+  },
+  "author": "Max De George",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MaxDeGeo/IGME430Project1/issues"
+  },
+  "homepage": "https://github.com/MaxDeGeo/IGME430Project1#readme",
+  "devDependencies": {
+    "eslint": "^7.9.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-import": "^2.22.0"
+  }
+}
