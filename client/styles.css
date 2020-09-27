@@ -311,3 +311,34 @@ font-size: 1.5em;
   text-align: center;
   transform: translateY(100%);
 }
+
+#newListAdd {
+
+}
+
+.addColBody {
+  padding-top: 10px;
+  display: inline-block;
+  background-color: #ebecf0;
+  width: 300px;
+  border-radius: 5px;
+  margin-left: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+}
+
+.addColInput {
+  width: calc(100% - 7px);
+  border-radius: 5px;
+  background-color: #f4f5f7;
+  border: 2px solid #005fcc;
+  height: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+
+.addColInput:focus {
+  background-color: white;
+}

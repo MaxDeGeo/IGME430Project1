@@ -53,6 +53,31 @@
       }
     };
 
+    const sendColumn = (e) => {
+      if ((e.target.parentElement.parentElement.children[0].value).trim() !== '') {
+        e.preventDefault();
+        const xhr = new XMLHttpRequest();
+        xhr.open('post', '/addColumn');
+
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onload = () => {
+          handleResponse(xhr, true);
+
+          clearPage();
+          getTasks(e);
+        };
+
+        const col = e.target.parentElement.parentElement.children[0].value;
+        console.log(col);
+        const formData = `column=${col}`;
+        xhr.send(formData);
+        
+        return false;
+      }
+    };
+
     const closeModal = (e) => {
       e.target.parentElement.parentElement.parentElement.style.display = "none";
     }
@@ -130,6 +155,11 @@
         listContainer.appendChild(list);
       }
 
+      createNewListButton(listContainer);
+
+    };
+
+    const createNewListButton = (listContainer) => {
       let newList = document.createElement('div');
       newList.id = "newList";
 
@@ -137,10 +167,10 @@
       listText.innerHTML = "Add a list";
       listText.classList.add('addListButton');
       newList.appendChild(listText);
+      newList.onclick = (e) => createColumn(e);
       
       listContainer.appendChild(newList);
-
-    }
+    };
 
     const newTask = (e) => {
       let list = e.target.closest('.list').children[1];
@@ -219,6 +249,50 @@
 
     const createColumn = (e) => {
       console.log("In");
+
+      replaceAddColumn();
+    }
+
+    const replaceAddColumn = () => {
+      const list = document.querySelector('#newList');
+      const listParent = list.parentElement;
+      listParent.removeChild(list);
+
+      const addColBody = document.createElement('div');
+      addColBody.classList.add('addColBody');
+      listParent.appendChild(addColBody);
+
+      const colTitleInput = document.createElement('input');
+      colTitleInput.classList.add('addColInput');
+      addColBody.appendChild(colTitleInput);
+    
+      const footerContainer = document.createElement('div');
+      footerContainer.classList = "";
+      footerContainer.classList.add('add-task-flex');
+
+      let button = document.createElement('div');
+      button.classList.add('add-task');
+      button.innerHTML = "Add Column";
+      button.onclick = (e) => sendColumn(e);
+      footerContainer.appendChild(button);
+
+      let cancel = document.createElement('div');
+      cancel.classList.add('cancel-task');
+      cancel.innerHTML = "x";
+      cancel.onclick = () => cancelAddColumn();
+      footerContainer.appendChild(cancel);
+
+      addColBody.appendChild(footerContainer);
+    }
+
+    const cancelAddColumn = () => {
+      const list = document.querySelector('.addColBody');
+      console.log(list);
+      const listParent = list.parentElement;
+      console.log(listParent);
+      listParent.removeChild(list);
+
+      createNewListButton(listParent);
     }
 
     const init = (e) => {

@@ -134,16 +134,15 @@ const addColumn = (request, response, params) => {
 
   // console.log(params);
   let colTitle = null;
-
-  if (params.title) {
-    colTitle = params.title;
+  if (params.column) {
+    colTitle = params.column;
   } else {
     return respond(request, response, 400, JSON.stringify(responseJson), 'application/json');
   }
 
   database.columns.push({ tasks: [], name: colTitle });
 
-  responseJson.message = 'Task Created!';
+  responseJson.message = 'Column Created!';
   return respond(request, response, 204, JSON.stringify(responseJson), 'application/json');
 };
 

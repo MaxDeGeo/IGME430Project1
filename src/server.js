@@ -29,24 +29,45 @@ const onRequest = (request, response) => {
   const parsedURL = url.parse(request.url);
   if (urlStruct[request.method][parsedURL.pathname]) {
     if (request.method === 'POST') {
-      const body = [];
+      if (parsedURL.pathname === '/addTask') {
+        const body = [];
 
-      request.on('error', (err) => {
-        console.dir(err);
-        response.statusCode = 400;
-        response.end();
-      });
+        request.on('error', (err) => {
+          console.dir(err);
+          response.statusCode = 400;
+          response.end();
+        });
 
-      request.on('data', (chunk) => {
-        body.push(chunk);
-      });
+        request.on('data', (chunk) => {
+          body.push(chunk);
+        });
 
-      request.on('end', () => {
-        const bodyString = Buffer.concat(body).toString();
-        const bodyParams = query.parse(bodyString);
+        request.on('end', () => {
+          const bodyString = Buffer.concat(body).toString();
+          const bodyParams = query.parse(bodyString);
 
-        responseHandler.addTask(request, response, bodyParams);
-      });
+          responseHandler.addTask(request, response, bodyParams);
+        });
+      } else {
+        const body = [];
+
+        request.on('error', (err) => {
+          console.dir(err);
+          response.statusCode = 400;
+          response.end();
+        });
+
+        request.on('data', (chunk) => {
+          body.push(chunk);
+        });
+
+        request.on('end', () => {
+          const bodyString = Buffer.concat(body).toString();
+          const bodyParams = query.parse(bodyString);
+
+          responseHandler.addColumn(request, response, bodyParams);
+        });
+      }
     } else {
       urlStruct[request.method][parsedURL.pathname](request, response, parsedURL.query);
     }
