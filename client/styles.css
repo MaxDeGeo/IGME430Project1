@@ -120,7 +120,6 @@ body {
   display: inline-block;
   background-color: #ebecf0;
   width: 300px;
-  /* height: 50px; */
   max-height: calc(100% - 70px);
   border-radius: 5px;
   margin-left: 20px;
@@ -201,7 +200,6 @@ font-size: 1.5em;
 }
 
 .task-title {
-  /* resize: vertical; */
   resize: none;
   width: calc(100% - 30px);
   font-family: sans-serif;
@@ -253,6 +251,7 @@ font-size: 1.5em;
   height: 100vh;
   width: 100vw;
   top: 0px;
+  z-index: 1;
 }
 
 #card-full-view-body {
@@ -291,6 +290,42 @@ font-size: 1.5em;
   cursor: pointer;
 }
 
+#card-full-content {
+  overflow-y: scroll;
+  width: 95%;
+  margin: 20px auto;
+  height: calc(500px - 97px);
+  padding-bottom: 25px;
+}
+
+.card-section-title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+#card-full-description {
+  margin-top: 10px;
+  width: 90%;
+  resize: none;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: rgba(9, 30, 66, .04);
+  border: 2px solid rgba(9, 30, 66, .00);
+  font-family: sans-serif;
+  color: black;
+  font-size: .9em;
+}
+
+#card-full-description:hover {
+  background-color: #e2e4ea;
+}
+
+#card-full-description:focus {
+  border: 2px solid #0279bf;
+  background-color: #e2e4ea;
+  /* height: 150px; */
+}
+
 #newList {
   display: inline-block;
   background-color: rgba(0, 0, 0, .24);
@@ -310,10 +345,6 @@ font-size: 1.5em;
   color: white;
   text-align: center;
   transform: translateY(100%);
-}
-
-#newListAdd {
-
 }
 
 .addColBody {
@@ -341,4 +372,92 @@ font-size: 1.5em;
 
 .addColInput:focus {
   background-color: white;
+}
+
+.addComment {
+  margin-top: 10px;
+  padding: 10px;
+  width: 90%;
+  background-color: white;
+  border: 1px solid #efefef;
+}
+
+.commentContainer {
+  margin-top: 25px;
+  width: 50%;
+}
+
+.commentBody {
+  border-radius: 5px;
+  border: 1px solid #efefef;
+  padding: 10px;
+  background-color: white;
+}
+
+.commentHead {
+  display: flex;
+}
+
+.commentIcon {
+  width: 25px;
+  height: 25px;
+  border-radius: 5em;
+  background-color: black;
+}
+
+.commentDate {
+  margin-left: 10px;
+  transform: translateY(13%);
+  font-size: 1.1em;
+  color: black;
+}
+
+.commentText {
+  padding-top: 10px
+}
+.commentTextInput {
+  padding-top: 10px;
+  width: calc(100% - 8px);
+  margin-top: 5px;
+  border: 1px solid white;
+}
+
+.commentFooter {
+  display: flex;
+  margin-top: 5px;
+}
+
+.subButtons {
+  font-size: .7em;
+  text-decoration: underline;
+  color: #5e6c84;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+#addCommentContainer {
+  margin-top: 5px;
+  display: none;
+}
+
+#addCommentContainer div:nth-child(1) {
+  border-radius: 5px;
+  width: 100px;
+  background-color: rgb(17, 146, 17);
+  text-align: center;
+  padding: 7px 0px;
+  cursor: pointer;
+  color: white;
+}
+
+#addCommentContainer div:nth-child(2) {
+  padding-left: 20px;
+  padding-top: 4px;
+  font-size: 1.5em;
+  color: gray;
+  cursor: pointer;
+}
+
+#addCommentContainer div:nth-child(2):hover {
+  color: darkgray;
 }

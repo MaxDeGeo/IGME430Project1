@@ -11,9 +11,11 @@ const urlStruct = {
     '/styles.css': responseHandler.getCSS,
     '/logo.png': responseHandler.getLogo,
     '/background.jpeg': responseHandler.getBackground,
+    '/htmlScripts.js': responseHandler.getHTMLScript,
+    '/apiScripts.js': responseHandler.getAPIScript,
     '/getTasks': responseHandler.getTasks,
     '/getTask': responseHandler.getTask,
-    // notFound: responseHandler.notFound,
+    notFound: responseHandler.notFound,
   },
   // HEAD: {
   //   '/getUsers': responseHandler.getUsersMeta,
@@ -22,6 +24,11 @@ const urlStruct = {
   POST: {
     '/addTask': responseHandler.addTask,
     '/addColumn': responseHandler.addColumn,
+    '/updateColumn': responseHandler.updateColumn,
+    '/updateTask': responseHandler.updateTask,
+    '/addComment': responseHandler.addComment,
+    '/updateComment': responseHandler.updateComment,
+    '/removeComment': responseHandler.removeComment,
   },
 };
 
@@ -48,7 +55,7 @@ const onRequest = (request, response) => {
 
           responseHandler.addTask(request, response, bodyParams);
         });
-      } else {
+      } else if (parsedURL.pathname === '/addColumn') {
         const body = [];
 
         request.on('error', (err) => {
@@ -67,12 +74,109 @@ const onRequest = (request, response) => {
 
           responseHandler.addColumn(request, response, bodyParams);
         });
+      } else if (parsedURL.pathname === '/updateColumn') {
+        const body = [];
+
+        request.on('error', (err) => {
+          console.dir(err);
+          response.statusCode = 400;
+          response.end();
+        });
+
+        request.on('data', (chunk) => {
+          body.push(chunk);
+        });
+
+        request.on('end', () => {
+          const bodyString = Buffer.concat(body).toString();
+          const bodyParams = query.parse(bodyString);
+
+          responseHandler.updateColumn(request, response, bodyParams);
+        });
+      } else if (parsedURL.pathname === '/updateTask') {
+        const body = [];
+
+        request.on('error', (err) => {
+          console.dir(err);
+          response.statusCode = 400;
+          response.end();
+        });
+
+        request.on('data', (chunk) => {
+          body.push(chunk);
+        });
+
+        request.on('end', () => {
+          const bodyString = Buffer.concat(body).toString();
+          const bodyParams = query.parse(bodyString);
+
+          responseHandler.updateTask(request, response, bodyParams);
+        });
+      } else if (parsedURL.pathname === '/addComment') {
+        const body = [];
+
+        request.on('error', (err) => {
+          console.dir(err);
+          response.statusCode = 400;
+          response.end();
+        });
+
+        request.on('data', (chunk) => {
+          body.push(chunk);
+        });
+
+        request.on('end', () => {
+          const bodyString = Buffer.concat(body).toString();
+          const bodyParams = query.parse(bodyString);
+
+          responseHandler.addComment(request, response, bodyParams);
+        });
+      } else if (parsedURL.pathname === '/updateComment') {
+        const body = [];
+
+        request.on('error', (err) => {
+          console.dir(err);
+          response.statusCode = 400;
+          response.end();
+        });
+
+        request.on('data', (chunk) => {
+          body.push(chunk);
+        });
+
+        request.on('end', () => {
+          const bodyString = Buffer.concat(body).toString();
+          const bodyParams = query.parse(bodyString);
+
+          responseHandler.updateComment(request, response, bodyParams);
+        });
+      } else if (parsedURL.pathname === '/removeComment') {
+        const body = [];
+
+        request.on('error', (err) => {
+          console.dir(err);
+          response.statusCode = 400;
+          response.end();
+        });
+
+        request.on('data', (chunk) => {
+          body.push(chunk);
+        });
+
+        request.on('end', () => {
+          const bodyString = Buffer.concat(body).toString();
+          const bodyParams = query.parse(bodyString);
+
+          responseHandler.removeComment(request, response, bodyParams);
+        });
+      } else {
+        urlStruct[request.method].notFound(request, response);
       }
     } else {
       urlStruct[request.method][parsedURL.pathname](request, response, parsedURL.query);
     }
   } else {
-    // urlStruct[request.method].notFound(request, response);
+    urlStruct[request.method].notFound(request, response);
   }
 };
 

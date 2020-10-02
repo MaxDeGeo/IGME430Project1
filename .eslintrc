@@ -2,6 +2,15 @@
   "extends": "airbnb/base",
   "rules": {
     "no-underscore-dangle" : "off",
+    "no-use-before-define": "off",
+    "no-unused-vars": "off",
+    "no-param-reassign": "off",
+    "max-len": "off",
+    "no-shadow": "off",
 	"no-plusplus": "off"
+  },
+  "env": {
+      "browser": true,
+      "node": true
   }
 }
