@@ -169,7 +169,7 @@ body {
 }
 
 .add-task-text div:nth-child(1) {
-font-size: 1.5em;
+  font-size: 1.5em;
 }
 
 .add-task-text div:nth-child(2) {
@@ -195,8 +195,9 @@ font-size: 1.5em;
   color: black;
   border-radius: 5px;
   padding: 15px;
-  padding-bottom: 30px;
+  /* padding-bottom: 30px; */
   cursor: pointer;
+  white-space: initial;
 }
 
 .task-title {
@@ -213,6 +214,14 @@ font-size: 1.5em;
 
 .task-title:focus {
   outline-width: 0;
+}
+
+.task-delete {
+  font-size: .7em;
+  text-decoration: underline;
+  color: #5e6c84;
+  cursor: pointer;
+  margin-left: 10px;
 }
 
 .add-task-flex {

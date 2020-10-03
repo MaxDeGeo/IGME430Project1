@@ -1,13 +1,14 @@
 const fs = require('fs');
 
+// Database for project
 const database = {
   columns: [
     {
       tasks: [
         {
           id: 0,
-          title: 'test',
-          desc: 'test desc',
+          title: 'How To Use Task Manager - DO NOT DELETE',
+          desc: 'Although self explainatory, some things might be confusing. To change titles of tasks and descriptions you must change the text and then click away from the input and lose focus. To delete a task, you must shift click the task. Everything else should make sense.',
           comments: [
             {
               id: 0,
@@ -96,6 +97,7 @@ const database = {
   ],
 };
 
+// Files required for the project to look and function properly.
 const index = fs.readFileSync(`${__dirname}/../client/index.html`);
 const css = fs.readFileSync(`${__dirname}/../client/styles.css`);
 const logo = fs.readFileSync(`${__dirname}/../images/logo.png`);
@@ -103,12 +105,14 @@ const background = fs.readFileSync(`${__dirname}/../images/background.jpeg`);
 const htmlScripts = fs.readFileSync(`${__dirname}/htmlScripts.js`);
 const apiScripts = fs.readFileSync(`${__dirname}/apiScripts.js`);
 
+// Handles responses
 const respond = (request, response, status, content, type) => {
   response.writeHead(status, { 'Content-Type': type });
   response.write(content);
   response.end();
 };
 
+// Handles head responses as data do not need to be returned.
 const respondMeta = (request, response, status, type) => {
   response.writeHead(status, { 'Content-Type': type });
   response.end();
@@ -128,8 +132,10 @@ const getHTMLScript = (request, response) => respond(request, response, 200, htm
 const getAPIScript = (request, response) => respond(request, response, 200, apiScripts, 'text/javascript');
 
 // GET
+// Get all tasks
 const getTasks = (request, response) => respond(request, response, 200, JSON.stringify(database), 'application/json');
 
+// Get specific task
 const getTask = (request, response, params) => {
   const col = params.substring(params.indexOf('=') + 1, params.indexOf('&'));
   const id = params.substring(params.lastIndexOf('=') + 1, params.length);
@@ -139,10 +145,11 @@ const getTask = (request, response, params) => {
 };
 
 // HEAD
-const getTasksMeta = (request, response) => respondMeta(request, response, 200, 'application/json');
-const getTaskMeta = (request, response) => respondMeta(request, response, 200, 'application/json');
+const getTasksMeta = (request, response) => respondMeta(request, response, 204, 'application/json');
+const getTaskMeta = (request, response) => respondMeta(request, response, 204, 'application/json');
 
 // POST
+// Add a new task
 const addTask = (request, response, params) => {
   const responseJson = {
     message: 'missingParams',
@@ -167,6 +174,7 @@ const addTask = (request, response, params) => {
   return respond(request, response, 201, JSON.stringify(responseJson), 'application/json');
 };
 
+// Add a new column
 const addColumn = (request, response, params) => {
   const responseJson = {
     message: 'missingParams',
@@ -185,6 +193,7 @@ const addColumn = (request, response, params) => {
   return respond(request, response, 201, JSON.stringify(responseJson), 'application/json');
 };
 
+// Update a column
 const updateColumn = (request, response, params) => {
   const responseJson = {
     message: 'missingParams',
@@ -205,6 +214,7 @@ const updateColumn = (request, response, params) => {
   return respond(request, response, 201, JSON.stringify(responseJson), 'application/json');
 };
 
+// Update a task
 const updateTask = (request, response, params) => {
   const responseJson = {
     message: 'missingParams',
@@ -215,14 +225,15 @@ const updateTask = (request, response, params) => {
   let taskTitle = null;
   let taskDesc = null;
 
-  if (params.colNum && params.taskId && params.taskTitle && params.taskDesc) {
+  if (params.colNum && params.taskId && params.taskTitle) {
     taskCol = params.colNum;
     taskId = params.taskId;
     taskTitle = params.taskTitle;
-    taskDesc = params.taskDesc;
   } else {
     return respond(request, response, 400, JSON.stringify(responseJson), 'application/json');
   }
+
+  taskDesc = params.taskDesc;
 
   database.columns[taskCol].tasks[taskId] = {
     id: taskId,
@@ -235,6 +246,7 @@ const updateTask = (request, response, params) => {
   return respond(request, response, 201, JSON.stringify(responseJson), 'application/json');
 };
 
+// Add a comment
 const addComment = (request, response, params) => {
   const responseJson = {
     message: 'missingParams',
@@ -261,6 +273,7 @@ const addComment = (request, response, params) => {
   return respond(request, response, 201, JSON.stringify(responseJson), 'application/json');
 };
 
+// Update a comment
 const updateComment = (request, response, params) => {
   const responseJson = {
     message: 'missingParams',
@@ -288,10 +301,11 @@ const updateComment = (request, response, params) => {
     text: cText,
   };
 
-  responseJson.message = 'Commented Updated!';
+  responseJson.message = 'Comment Updated!';
   return respond(request, response, 201, JSON.stringify(responseJson), 'application/json');
 };
 
+// Remove a comment
 const removeComment = (request, response, params) => {
   const responseJson = {
     message: 'missingParams',
@@ -319,12 +333,48 @@ const removeComment = (request, response, params) => {
     database.columns[col].tasks[id].comments[i].id = i;
   }
 
-  responseJson.message = 'Commented Updated!';
+  responseJson.message = 'Comment Updated!';
+  return respond(request, response, 201, JSON.stringify(responseJson), 'application/json');
+};
+
+// Remove a task
+const removeTask = (request, response, params) => {
+  const responseJson = {
+    message: 'missingParams',
+  };
+
+  let col = null;
+  let id = null;
+
+  if (params.col && params.id) {
+    col = params.col;
+    id = params.id;
+  } else {
+    return respond(request, response, 400, JSON.stringify(responseJson), 'application/json');
+  }
+
+  database.columns[col].tasks.splice(id, 1);
+
+  for (let i = 0; i < database.columns[col].tasks.length; i++) {
+    database.columns[col].tasks[i].id = i;
+  }
+
+  responseJson.message = 'Task Updated!';
   return respond(request, response, 201, JSON.stringify(responseJson), 'application/json');
 };
 
 // ERROR
+
+// Handles if a request is not found
 const notFound = (request, response) => respondMeta(request, response, 404, 'application/json');
+
+const notFoundGet = (request, response) => {
+  const responseJson = {
+    message: 'pageNotFound',
+  };
+
+  return respond(request, response, 404, JSON.stringify(responseJson), 'application/json');
+};
 
 module.exports = {
   getIndex,
@@ -344,5 +394,7 @@ module.exports = {
   addComment,
   updateComment,
   removeComment,
+  removeTask,
   notFound,
+  notFoundGet,
 };

@@ -1,6 +1,5 @@
+// Handles the responses returned by the server and the XHR Call.
 const handleResponse = (e, xhr, type, col) => {
-  // console.log(xhr.response);
-  // getTasks(e);
   const modal = document.querySelector('#card-full-view');
 
   if (type && type === 'modal') {
@@ -19,11 +18,11 @@ const handleResponse = (e, xhr, type, col) => {
   }
 };
 
+// Calls the server to get a specific task
 const getInfo = (e, col, id) => {
   const xhr = new XMLHttpRequest();
   xhr.open('get', `/getTask?column=${col}&task=${id}`);
   xhr.setRequestHeader('Accept', 'application/json');
-  // console.log(xhr);
   xhr.onload = (e) => handleResponse(e, xhr, 'modal', col);
   xhr.send();
   e.preventDefault();
@@ -35,6 +34,7 @@ const getInfo = (e, col, id) => {
 
 // TASK REQUESTS
 
+// Get all tasks from server.
 const getTasks = (e) => {
   const xhr = new XMLHttpRequest();
   xhr.open('get', '/getTasks');
@@ -45,6 +45,7 @@ const getTasks = (e) => {
   e.preventDefault();
 };
 
+// Send new to server
 const sendTask = (e) => {
   if ((e.target.parentElement.parentElement.children[1].lastChild.children[0].value).trim() !== '') {
     e.preventDefault();
@@ -70,9 +71,10 @@ const sendTask = (e) => {
   return false;
 };
 
+// Updates a task in the server.
 const updateTask = (e) => {
   const modal = document.querySelector('#card-full-view');
-
+  e.target.style.height = `${e.target.scrollHeight - 20}px`;
   if (e.target.value !== '') {
     e.preventDefault();
     const xhr = new XMLHttpRequest();
@@ -92,7 +94,6 @@ const updateTask = (e) => {
     const taskId = modal.dataset.activeid;
     const taskTitle = modal.children[0].children[0].children[0].value;
     const taskDesc = modal.children[0].children[1].children[0].children[1].value;
-
     const formData = `colNum=${colNum}&taskId=${taskId}&taskTitle=${taskTitle}&taskDesc=${taskDesc}`;
     xhr.send(formData);
   } else {
@@ -104,8 +105,35 @@ const updateTask = (e) => {
   return false;
 };
 
+// Deletes the comment from the task and removes from server
+const deleteTask = (e, col, id) => {
+  const comment = e.target.parentElement.parentElement;
+
+  e.preventDefault();
+  const xhr = new XMLHttpRequest();
+  xhr.open('post', '/removeTask');
+
+  xhr.setRequestHeader('Accept', 'application/json');
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+  xhr.onload = () => {
+    handleResponse(e, xhr, true, 'modal');
+
+    clearPage();
+    getTasks(e);
+    // getInfo(e, modal.dataset.activecol, modal.dataset.activeid);
+  };
+  const modal = document.querySelector('#card-full-view');
+
+  const formData = `col=${col}&id=${id}`;
+  xhr.send(formData);
+
+  return false;
+};
+
 // COLUMN REQUESTS
 
+// Sends a new column to the database
 const sendColumn = (e) => {
   if ((e.target.parentElement.parentElement.children[0].value).trim() !== '') {
     e.preventDefault();
@@ -123,7 +151,6 @@ const sendColumn = (e) => {
     };
 
     const col = e.target.parentElement.parentElement.children[0].value;
-    // console.log(col);
     const formData = `column=${col}`;
     xhr.send(formData);
   }
@@ -131,6 +158,7 @@ const sendColumn = (e) => {
   return false;
 };
 
+// Updates a column in the database
 const updateColumn = (e) => {
   if (e.target.value !== '') {
     e.preventDefault();
@@ -152,7 +180,6 @@ const updateColumn = (e) => {
     const formData = `colNum=${colNum}&colTitle=${colTitle}`;
     xhr.send(formData);
   } else {
-    // console.log("OUT");
     clearPage();
     getTasks(e);
   }
@@ -162,9 +189,9 @@ const updateColumn = (e) => {
 
 // COMMENT REQUESTS
 
+// Adds a comment to a task on the sever.
 const sendComment = (e) => {
   const text = document.querySelector('.addComment').value;
-  // console.log(text);
   if (text.trim() !== '') {
     e.preventDefault();
     const xhr = new XMLHttpRequest();
@@ -193,6 +220,7 @@ const sendComment = (e) => {
   return false;
 };
 
+// Edits the comment on the task
 const editComment = (e) => {
   e.target.parentElement.style.display = 'none';
   const parent = e.target.parentElement.parentElement.children[0];
@@ -234,7 +262,6 @@ const updateComment = (e) => {
     const col = modal.dataset.activecol;
     const id = modal.dataset.activeid;
     const { cid } = e.target.parentElement.parentElement.dataset;
-    // console.log(col);
 
     const parent = e.target.parentElement;
 
@@ -252,6 +279,7 @@ const updateComment = (e) => {
   return false;
 };
 
+// Deletes the comment from the task and removes from server
 const deleteComment = (e) => {
   const comment = e.target.parentElement.parentElement;
 
@@ -281,21 +309,21 @@ const deleteComment = (e) => {
   return false;
 };
 
+// Open the modal to see the task and edit it
 const openModal = (e) => {
   const modal = document.querySelector('#card-full-view');
-  const modalDesc = document.querySelector('#card-full-description');
-  // console.log(modalDesc.style.height);
-  modalDesc.style.height = `${25 + modalDesc.scrollHeight}px !important`;
   modal.style.display = 'block';
   modal.children[0].children[0].children[0].value = e.target.innerHTML;
 };
 
+// Closes the modal for the task
 const closeModal = (e) => {
   e.target.parentElement.parentElement.parentElement.activecol = -1;
   e.target.parentElement.parentElement.parentElement.activeid = -1;
   e.target.parentElement.parentElement.parentElement.style.display = 'none';
 };
 
+// Setup the page to see the columns and tasks
 const setupPage = (xhr) => {
   const json = JSON.parse(xhr.response);
   const listContainer = document.querySelector('#list-container');
@@ -329,7 +357,13 @@ const setupPage = (xhr) => {
       const task = document.createElement('div');
       task.classList.add('task');
       task.dataset.id = j;
-      task.onclick = (e) => getInfo(e, i, json.columns[i].tasks[j].id);
+      task.onclick = (e) => {
+        if (e.shiftKey) {
+          deleteTask(e, i, json.columns[i].tasks[j].id);
+        } else {
+          getInfo(e, i, json.columns[i].tasks[j].id);
+        }
+      };
       const taskText = document.createElement('div');
       taskText.classList.add('created-task-title');
       taskText.innerHTML = json.columns[i].tasks[j].title;
@@ -367,6 +401,7 @@ const setupPage = (xhr) => {
   createNewListButton(listContainer);
 };
 
+// Create the buttons to add a new list on click
 const createNewListButton = (listContainer) => {
   const newList = document.createElement('div');
   newList.id = 'newList';
@@ -380,6 +415,7 @@ const createNewListButton = (listContainer) => {
   listContainer.appendChild(newList);
 };
 
+// Creates the new tasks box to add a task
 const newTask = (e) => {
   const list = e.target.closest('.list').children[1];
 
@@ -404,6 +440,7 @@ const newTask = (e) => {
   createFooter(listFooter);
 };
 
+// Creates the footer for the column
 const createFooter = (footerContainer) => {
   footerContainer.classList = '';
   footerContainer.classList.add('add-task-flex');
@@ -421,6 +458,7 @@ const createFooter = (footerContainer) => {
   footerContainer.appendChild(cancel);
 };
 
+// Cancels the add task functionality and returns it to its default status
 const cancelTask = (e) => {
   const list = e.target.closest('.list');
   const listBody = list.children[1];
@@ -435,7 +473,7 @@ const cancelTask = (e) => {
 
   const taskButton = document.createElement('div');
   taskButton.classList.add('add-task-button');
-  taskButton.onclick = () => newTask(e);
+  taskButton.onclick = (e) => newTask(e);
   addContainer.appendChild(taskButton);
 
   const buttonText = document.createElement('div');
@@ -455,6 +493,7 @@ const cancelTask = (e) => {
   listBody.removeChild(listBody.lastChild);
 };
 
+// Cancel the add column function and returns to normal column footer, or lackthereof
 const cancelAddColumn = () => {
   const list = document.querySelector('.addColBody');
   const listParent = list.parentElement;
@@ -463,6 +502,7 @@ const cancelAddColumn = () => {
   createNewListButton(listParent);
 };
 
+// Replaces the add column button with the add column footer
 const replaceAddColumn = () => {
   const list = document.querySelector('#newList');
   const listParent = list.parentElement;
@@ -495,10 +535,12 @@ const replaceAddColumn = () => {
   addColBody.appendChild(footerContainer);
 };
 
+// Creates the footer for the column section
 const createColumn = (e) => {
   replaceAddColumn();
 };
 
+// Removes all children from the page to re-add the page
 const clearPage = () => {
   const listCont = document.querySelector('#list-container');
   while (listCont.firstChild) {
@@ -506,6 +548,7 @@ const clearPage = () => {
   }
 };
 
+// Clear comments from a task so they can be re-added
 const clearComments = () => {
   const comments = document.querySelector('#card-comment-container');
   while (comments.firstChild) {
@@ -513,6 +556,7 @@ const clearComments = () => {
   }
 };
 
+// Creates the add comment section
 const createComment = (comment) => {
   const commentContainer = document.createElement('div');
   commentContainer.classList.add('commentContainer');
@@ -557,17 +601,17 @@ const createComment = (comment) => {
   commentFooter.appendChild(commentDelete);
   commentContainer.appendChild(commentFooter);
 
-  // return commentBody;
-
   const commentSec = document.querySelector('#card-comment-container');
   commentSec.appendChild(commentContainer);
 };
 
+// Show the add comment buttons
 const showAddComment = () => {
   const addButtons = document.querySelector('#addCommentContainer');
   addButtons.style.display = 'flex';
 };
 
+// Removes the add comment buttons
 const hideAddComment = () => {
   const addButtons = document.querySelector('#addCommentContainer');
   addButtons.style.display = 'none';
